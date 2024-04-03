@@ -77,6 +77,6 @@ class PyPISearchApp(App):
         webbrowser.open(url)
 
 
-if __name__ == "__main__":
+def run() -> None:
     app = PyPISearchApp()
     app.run(inline=True)
