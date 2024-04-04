@@ -41,6 +41,7 @@ class PyPISearchApp(App):
 
     @work(exclusive=True)
     async def search_pypi(self, value: str) -> None:
+        self.search_results.clear()
         table = self.query_one(DataTable)
         table.clear(columns=True)
         table.loading = True
