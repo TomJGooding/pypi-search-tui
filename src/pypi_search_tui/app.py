@@ -37,6 +37,10 @@ class PyPISearchApp(App):
         height: 13;
         border: tall transparent;
     }
+
+    LoadingIndicator {
+        background: transparent;
+    }
     """
 
     search_results: list[Package] = []
