@@ -61,6 +61,12 @@ class PyPISearchApp(App):
 
         if not self.search_results:
             table.add_column(f"There were no results for '{value}'")
+
+            # Add a temporary row as a workaround for
+            # https://github.com/Textualize/textual/issues/4386
+            # where new columns won't appear if the table is empty.
+            table.add_row()
+            table.clear()
             return
 
         table.add_columns(*("Name", "Version", "Description"))
