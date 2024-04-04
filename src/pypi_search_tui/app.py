@@ -1,3 +1,4 @@
+import argparse
 import webbrowser
 from dataclasses import dataclass
 
@@ -29,10 +30,21 @@ class PyPISearchApp(App):
 
     search_results: list[Package] = []
 
+    def __init__(
+        self,
+        initial_query: str | None = None,
+    ):
+        super().__init__()
+        self.initial_query = initial_query
+
     def compose(self) -> ComposeResult:
-        yield Input(placeholder="Search PyPI")
+        yield Input(placeholder="Search PyPI", value=self.initial_query)
         with Container():
             yield DataTable(cursor_type="row")
+
+    def on_mount(self) -> None:
+        if self.initial_query:
+            self.search_pypi(self.initial_query)
 
     @on(Input.Submitted)
     def on_input_submitted(self, event: Input.Submitted) -> None:
@@ -40,13 +52,13 @@ class PyPISearchApp(App):
             self.search_pypi(event.value)
 
     @work(exclusive=True)
-    async def search_pypi(self, value: str) -> None:
+    async def search_pypi(self, query: str) -> None:
         self.search_results.clear()
         table = self.query_one(DataTable)
         table.clear(columns=True)
         table.loading = True
 
-        url = f"https://pypi.org/search/?q={value}"
+        url = f"https://pypi.org/search/?q={query}"
         async with httpx.AsyncClient() as client:
             resp = await client.get(url)
 
@@ -61,7 +73,7 @@ class PyPISearchApp(App):
         table.loading = False
 
         if not self.search_results:
-            table.add_column(f"There were no results for '{value}'")
+            table.add_column(f"There were no results for '{query}'")
 
             # Add a temporary row as a workaround for
             # https://github.com/Textualize/textual/issues/4386
@@ -86,6 +98,22 @@ class PyPISearchApp(App):
         webbrowser.open(url)
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        prog="pypi-search-tui",
+        # TODO: description="",
+    )
+    parser.add_argument(
+        "query",
+        help="search terms to find packages on PyPI",
+        nargs="*",
+        type=str,
+    )
+    return parser.parse_args()
+
+
 def run() -> None:
-    app = PyPISearchApp()
+    args = parse_args()
+    query = " ".join(args.query) if args.query else None
+    app = PyPISearchApp(initial_query=query)
     app.run(inline=True)
