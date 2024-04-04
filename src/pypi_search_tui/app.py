@@ -6,8 +6,9 @@ import httpx
 from bs4 import BeautifulSoup
 from textual import on, work
 from textual.app import App, ComposeResult
+from textual.binding import Binding
 from textual.containers import Container
-from textual.widgets import DataTable, Input
+from textual.widgets import DataTable, Footer, Input
 
 
 @dataclass
@@ -18,8 +19,18 @@ class Package:
     url: str
 
 
+class SearchResultsTable(DataTable):
+    BINDINGS = [
+        Binding("enter", "select_cursor", "View on PyPI", show=True),
+    ]
+
+
 class PyPISearchApp(App):
     ENABLE_COMMAND_PALETTE = False
+
+    BINDINGS = [
+        Binding("ctrl+c", "quit", "Quit", show=True, priority=True),
+    ]
 
     CSS = """
     Container {
@@ -40,7 +51,8 @@ class PyPISearchApp(App):
     def compose(self) -> ComposeResult:
         yield Input(placeholder="Search PyPI", value=self.initial_query)
         with Container():
-            yield DataTable(cursor_type="row")
+            yield SearchResultsTable(cursor_type="row")
+        yield Footer()
 
     def on_mount(self) -> None:
         if self.initial_query:
@@ -54,7 +66,7 @@ class PyPISearchApp(App):
     @work(exclusive=True)
     async def search_pypi(self, query: str) -> None:
         self.search_results.clear()
-        table = self.query_one(DataTable)
+        table = self.query_one(SearchResultsTable)
         table.clear(columns=True)
         table.loading = True
 
@@ -92,8 +104,8 @@ class PyPISearchApp(App):
 
         table.focus()
 
-    @on(DataTable.RowSelected)
-    def open_package_url(self, event: DataTable.RowSelected) -> None:
+    @on(SearchResultsTable.RowSelected)
+    def open_url_in_browser(self, event: SearchResultsTable.RowSelected) -> None:
         url = self.search_results[event.cursor_row].url
         webbrowser.open(url)
 
