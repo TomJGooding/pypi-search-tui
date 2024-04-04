@@ -18,6 +18,8 @@ class Package:
 
 
 class PyPISearchApp(App):
+    ENABLE_COMMAND_PALETTE = False
+
     CSS = """
     Container {
         height: 13;
