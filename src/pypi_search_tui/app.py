@@ -19,7 +19,7 @@ class Package:
     url: str
 
 
-class SearchResults(DataTable):
+class SearchResultsTable(DataTable):
     BINDINGS = [
         Binding("enter", "select_cursor", "View on PyPI", show=True),
     ]
@@ -51,7 +51,7 @@ class PyPISearchApp(App):
     def compose(self) -> ComposeResult:
         yield Input(placeholder="Search PyPI", value=self.initial_query)
         with Container():
-            yield SearchResults(cursor_type="row")
+            yield SearchResultsTable(cursor_type="row")
         yield Footer()
 
     def on_mount(self) -> None:
@@ -66,7 +66,7 @@ class PyPISearchApp(App):
     @work(exclusive=True)
     async def search_pypi(self, query: str) -> None:
         self.search_results.clear()
-        table = self.query_one(SearchResults)
+        table = self.query_one(SearchResultsTable)
         table.clear(columns=True)
         table.loading = True
 
@@ -104,8 +104,8 @@ class PyPISearchApp(App):
 
         table.focus()
 
-    @on(SearchResults.RowSelected)
-    def open_url_in_browser(self, event: SearchResults.RowSelected) -> None:
+    @on(SearchResultsTable.RowSelected)
+    def open_url_in_browser(self, event: SearchResultsTable.RowSelected) -> None:
         url = self.search_results[event.cursor_row].url
         webbrowser.open(url)
 
