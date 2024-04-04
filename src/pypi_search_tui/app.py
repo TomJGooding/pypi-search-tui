@@ -113,11 +113,11 @@ class PyPISearchApp(App):
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="pypi-search-tui",
-        # TODO: description="",
+        description="Search Python packages from your terminal",
     )
     parser.add_argument(
         "query",
-        help="search terms to find packages on PyPI",
+        help="Search terms to find packages on PyPI",
         nargs="*",
         type=str,
     )

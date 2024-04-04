@@ -1,12 +1,16 @@
 # pypi-search-tui
 
+Search Python packages from your terminal.
+
 > [!WARNING]
 > This project is currently a work in progress
 
 ## Demo
 
+Install `pypi-search-tui` using [pipx](https://pypa.github.io/pipx/):
+
 ```
-python -m pypi_search_tui
+pipx install git+https://github.com/TomJGooding/pypi-search-tui.git
 ```
 
 ## Licence
