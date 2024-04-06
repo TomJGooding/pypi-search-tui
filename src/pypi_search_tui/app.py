@@ -89,6 +89,7 @@ class PyPISearchApp(App):
         table.loading = False
 
         if not self.search_results:
+            table.can_focus = False
             table.add_column(f"There were no results for '{query}'")
 
             # Add a temporary row as a workaround for
@@ -98,6 +99,7 @@ class PyPISearchApp(App):
             table.clear()
             return
 
+        table.can_focus = True
         table.add_columns(*("Name", "Version", "Description"))
         for package in self.search_results:
             table.add_row(
