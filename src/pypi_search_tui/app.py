@@ -76,9 +76,10 @@ class PyPISearchApp(App):
         table.clear(columns=True)
         table.loading = True
 
-        url = f"https://pypi.org/search/?q={query}"
+        url = "https://pypi.org/search/"
+        params = {"q": query}
         async with httpx.AsyncClient() as client:
-            resp = await client.get(url)
+            resp = await client.get(url, params=params)
 
         soup = BeautifulSoup(resp.content, "html.parser")
         for package in soup.find_all("a", class_="package-snippet"):
