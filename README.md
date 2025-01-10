@@ -1,9 +1,11 @@
 # pypi-search-tui
 
-Search Python packages from your terminal.
+> [!IMPORTANT]
+> `pypi-search-tui` no longer works and the repository has been archived.
+>
+> This is due to PyPI's new protection measures on their search page to prevent abuse.
 
-> [!WARNING]
-> This project is currently a work in progress
+Search Python packages from your terminal.
 
 ## Demo
 
